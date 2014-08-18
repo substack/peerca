@@ -21,11 +21,15 @@ This package shells out to `openssl` commands to generate certificates.
 ```
 peerca COMMAND OPTIONS
 
-  peerca generate {-d DIR | -p PROFILE}
+  peerca generate HOST {-d DIR}
+ 
+    Generate local certificates for HOST in DIR/HOST.
 
-  peerca sign CERT.pem {-d DIR | -p PROFILE}
+  peerca sign CERT.pem HOST {-d DIR}
 
-  peerca cafile {-d DIR | -p PROFILE}
+    Sign CERT.pem using the certificates in DIR/HOST.
+
+  peerca cafile HOST {-d DIR}
 
     Print the path to the cafile for PROFILE in DIR.
 
@@ -33,10 +37,6 @@ peerca COMMAND OPTIONS
   
     -d DIR      Profile directory. If not provided uses the environment
                 variable $PEERCA_DIR or ~/.config/peerca
-
-    -p PROFILE  Profile name. Defaults to the $PEERCA_PROFILE environment
-                variable, which is a subdirectory of the profile
-                directory.
 
 ```
 
