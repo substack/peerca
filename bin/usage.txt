@@ -1,0 +1,19 @@
+peerca COMMAND OPTIONS
+
+  peerca generate {-d DIR | -p PROFILE}
+
+  peerca sign CERT.pem {-d DIR | -p PROFILE}
+
+  peerca cafile {-d DIR | -p PROFILE}
+
+    Print the path to the cafile for PROFILE in DIR.
+
+  OPTIONS
+  
+    -d DIR      Profile directory. If not provided uses the environment
+                variable $PEERCA_DIR or ~/.config/peerca
+
+    -p PROFILE  Profile name. Defaults to the $PEERCA_PROFILE environment
+                variable, which is a subdirectory of the profile
+                directory.
+
