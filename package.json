@@ -1,0 +1,36 @@
+{
+  "name": "peerca",
+  "version": "1.0.0",
+  "description": "issue and revoke TLS certificates for authentication",
+  "bin": {
+    "peerca": "bin/cmd.js"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "minimist": "~1.1.0"
+  },
+  "devDependencies": {
+    "tape": "^2.13.2"
+  },
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/substack/peerca.git"
+  },
+  "homepage": "https://github.com/substack/peerca",
+  "keywords": [
+    "certificate",
+    "ca",
+    "tls",
+    "authentication",
+    "authorized_keys"
+  ],
+  "author": {
+    "name": "James Halliday",
+    "email": "mail@substack.net",
+    "url": "http://substack.net"
+  },
+  "license": "MIT"
+}
