@@ -1,8 +1,8 @@
 #!/bin/bash
 
-HOST="$1"
-if test -z "$HOST"; then
-  echo 'host not provided' >&2
+CERT="$1"
+if test -z "$CERT"; then
+  echo 'cert not provided' >&2
   exit 1;
 fi
 
@@ -12,7 +12,5 @@ mkdir -p "$DIR"
 
 cd "$DIR"
 
-openssl genrsa -des3 -out client-key.pem 4096
-openssl req -subj '/CN=client' -new -key client-key.pem \
-  -out client.csr
-
+openssl x509 -req -days 365 -in "$CERT" -CA ca.pem -CAkey ca-key.pem \
+  -out client-cert.pem -extfile extfile.cnf || exit 1

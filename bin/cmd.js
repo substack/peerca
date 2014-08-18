@@ -3,6 +3,7 @@
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var minimist = require('minimist');
+var assert = require('assert');
 
 var argv = minimist(process.argv.slice(2), {
     alias: { h: 'help', d: ['dir','directory'] },
@@ -21,7 +22,9 @@ else if (match(cmd, 'generate')) {
         return usage(1);
     }
     var args = [ host, path.join(argv.dir, host) ];
-    spawn(path.join(__dirname, 'generate.sh'), args, { stdio: 'inherit' });
+    spawn(path.join(__dirname, 'generate.sh'), args, { stdio: 'inherit' })
+        .on('exit', function (code) { assert.equal(code, 0) })
+    ;
 }
 else if (match(cmd, 'sign')) {
     var certfile = argv._[1];
@@ -35,7 +38,9 @@ else if (match(cmd, 'sign')) {
         return usage(1);
     }
     var args = [ certfile, path.join(argv.dir, host) ];
-    spawn(path.join(__dirname, 'sign.sh'), args, { stdio: 'inherit' });
+    spawn(path.join(__dirname, 'sign.sh'), args, { stdio: 'inherit' })
+        .on('exit', function (code) { assert.equal(code, 0) })
+    ;
 }
 else if (match(cmd, 'cafile')) {
     var host = argv._[1];

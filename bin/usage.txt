@@ -4,9 +4,9 @@ peerca COMMAND OPTIONS
  
     Generate local certificates for HOST in DIR/HOST.
 
-  peerca sign CERT.pem HOST {-d DIR}
+  peerca sign CERT.csr HOST {-d DIR}
 
-    Sign CERT.pem using the certificates in DIR/HOST.
+    Sign CERT.csr using the certificates in DIR/HOST.
 
   peerca cafile HOST {-d DIR}
 
@@ -14,6 +14,6 @@ peerca COMMAND OPTIONS
 
   OPTIONS
   
-    -d DIR      Profile directory. If not provided uses the environment
-                variable $PEERCA_DIR or ~/.config/peerca
+    -d DIR  Profile directory. If not provided uses the environment
+            variable $PEERCA_DIR or ~/.config/peerca
 
