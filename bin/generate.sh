@@ -24,15 +24,15 @@ if test \! -e ca.pem; then
 fi
 
 # generate and sign server key
-if test \! -e server-cert.pem; then
+if test \! -e self-cert.pem; then
     echo 'extendedKeyUsage = clientAuth' > extfile.cnf
     
-    echo | openssl genrsa -passout stdin -out server-key.pem 4096 \
+    echo | openssl genrsa -passout stdin -out self-key.pem 4096 \
         || exit 1
     
-    openssl req -subj "/CN=$HOST" -new -key server-key.pem \
-        -out server.csr || exit 1
+    openssl req -subj "/CN=$HOST" -new -key self-key.pem \
+        -out self.csr || exit 1
     
-    openssl x509 -req -days 365 -in server.csr -CA ca.pem \
-        -CAkey ca-key.pem -out server-cert.pem || exit 1
+    openssl x509 -req -days 365 -in self.csr -CA ca.pem \
+        -CAkey ca-key.pem -out self-cert.pem || exit 1
 fi
