@@ -8,8 +8,4 @@ var opts = {
 };
 
 var stream = tls.connect(7007, 'localhost', opts);
-stream.on('secureConnect', function () {
-    console.log('connect!');
-});
-
 stream.pipe(process.stdout);
