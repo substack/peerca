@@ -26,8 +26,13 @@ function PeerCA (opts) {
     this.dir = defined(opts.dir, process.env.PEERCA_PATH);
 }
 
-PeerCA.prototype.generate = function (cb) {
-    var args = [ this.host, path.join(this.dir, this.host) ];
+PeerCA.prototype.generate = function (host, cb) {
+    if (typeof host === 'function') {
+        cb = host;
+        host = undefined;
+    }
+    if (!host) host = 'localhost';
+    var args = [ host, path.join(this.dir, host) ];
     var ps = bin('generate.sh', args);
     ps.on('exit', function (code) {
         if (cb && code) cb(new Error('non-zero exit code: ' + code))
@@ -106,8 +111,8 @@ PeerCA.prototype._archive = function (host) {
     return r.pipe(tar.Pack())
 };
 
-PeerCA.prototype.request = function () {
-    var host = defined(argv._[1], 'localhost');
-    var file = path.join(argv.dir, host, 'self.csr');
+PeerCA.prototype.request = function (host) {
+    if (!host) host = 'localhost';
+    var file = path.join(this.dir, host, 'self.csr');
     return fs.createReadStream(file);
 };

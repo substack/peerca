@@ -77,9 +77,8 @@ else if (match(cmd, 'authorize', 2)) {
     ps.stdout.pipe(output);
 }
 else if (match(cmd, 'request', 2)) {
-    var host = defined(argv._[1], 'localhost');
-    var file = path.join(argv.dir, host, 'self.csr');
-    fs.createReadStream(file).pipe(process.stdout);
+    var ca = peerca(argv);
+    ca.request().pipe(process.stdout);
 }
 else usage(1)
 
