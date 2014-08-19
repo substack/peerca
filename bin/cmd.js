@@ -2,9 +2,12 @@
 
 var fs = require('fs');
 var path = require('path');
-var spawn = require('child_process').spawn;
-var minimist = require('minimist');
 var assert = require('assert');
+var spawn = require('child_process').spawn;
+
+var minimist = require('minimist');
+var split = require('split');
+var through = require('through2');
 
 var argv = minimist(process.argv.slice(2), {
     alias: {
@@ -18,7 +21,7 @@ var argv = minimist(process.argv.slice(2), {
 
 var cmd = argv._[0];
 
-if (argv.help || match(cmd, 'help')) {
+if (argv.help || match(cmd, 'help', 2)) {
     usage(0);
 }
 else if (match(cmd, 'generate', 1)) {
@@ -30,6 +33,24 @@ else if (match(cmd, 'generate', 1)) {
     var args = [ host, path.join(argv.dir, host) ];
     spawn(path.join(__dirname, 'generate.sh'), args, { stdio: 'inherit' })
         .on('exit', function (code) { assert.equal(code, 0) })
+    ;
+}
+else if (match(cmd, 'hash', 2)) {
+    var host = argv._[1];
+    if (!host) {
+        console.error('ERROR: peerca generate requires a HOST argument');
+        return usage(1);
+    }
+    var args = [ path.join(argv.dir, host) ];
+    spawn(path.join(__dirname, 'hash.sh'), args, { stdio: [ 0, 'pipe', 2 ] })
+        .on('exit', function (code) { assert.equal(code, 0) })
+        .stdout.pipe(split()).pipe(through(function (buf, enc, next) {
+            var line = buf.toString('utf8');
+            var m = /^SHA1 Fingerprint=(\S+)/.exec(line);
+            if (!m) { this.push(buf + '\n'); return next() }
+            this.push(m[1].split(':').join('').toLowerCase());
+            next();
+        })).pipe(process.stdout)
     ;
 }
 else if (match(cmd, 'sign', 2)) {
@@ -54,7 +75,7 @@ else if (match(cmd, 'sign', 2)) {
         .stdout.pipe(process.stdout)
     ;
 }
-else if (match(cmd, 'cafile', 1)) {
+else if (match(cmd, 'cafile', 2)) {
     var host = argv._[1];
     if (!host) {
         console.error('ERROR: peerca cafile requires a HOST argument');

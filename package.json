@@ -7,7 +7,9 @@
   },
   "main": "index.js",
   "dependencies": {
-    "minimist": "~1.1.0"
+    "minimist": "^1.1.0",
+    "split": "~0.3.0",
+    "through2": "^1.1.1"
   },
   "devDependencies": {
     "tape": "^2.13.2"
