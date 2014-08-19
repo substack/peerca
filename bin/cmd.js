@@ -8,17 +8,21 @@ var spawn = require('child_process').spawn;
 var minimist = require('minimist');
 var split = require('split');
 var through = require('through2');
+var defined = require('defined');
 
 var argv = minimist(process.argv.slice(2), {
     alias: {
-        h: 'help',
+        h: 'host',
         d: ['dir','directory'],
         p: 'port',
         o: 'outfile'
     },
     default: {
-        dir: process.env.PEERCA_PATH
-            || path.join(process.env.HOME, '.config/peerca')
+        dir: defined(
+            process.env.PEERCA_PATH,
+            path.join(process.env.HOME, '.config/peerca')
+        ),
+        host: defined(process.env.PEERCA_HOST, 'localhost')
     }
 });
 
@@ -28,22 +32,14 @@ if (argv.help || match(cmd, 'help', 2)) {
     usage(0);
 }
 else if (match(cmd, 'generate', 1)) {
-    var host = argv._[1];
-    if (!host) {
-        console.error('ERROR: peerca generate requires a HOST argument');
-        return usage(1);
-    }
+    var host = defined(argv._[1], 'localhost');
     var args = [ host, path.join(argv.dir, host) ];
     spawn(path.join(__dirname, 'generate.sh'), args, { stdio: 'inherit' })
         .on('exit', function (code) { assert.equal(code, 0) })
     ;
 }
-else if (match(cmd, 'hash', 2)) {
-    var host = argv._[1];
-    if (!host) {
-        console.error('ERROR: peerca generate requires a HOST argument');
-        return usage(1);
-    }
+else if (match(cmd, 'fingerprint', 2)) {
+    var host = defined(argv._[1], 'localhost');
     var args = [ path.join(argv.dir, host) ];
     spawn(path.join(__dirname, 'hash.sh'), args, { stdio: [ 0, 'pipe', 2 ] })
         .on('exit', function (code) { assert.equal(code, 0) })
@@ -62,11 +58,7 @@ else if (match(cmd, 'sign', 2)) {
         console.error('ERROR: peerca sign requires a CERT.ca argument');
         return usage(1);
     }
-    var host = argv._[2];
-    if (!host) {
-        console.error('ERROR: peerca sign requires a HOST argument');
-        return usage(1);
-    }
+    var host = defined(argv._[2], 'localhost');
     var args = [
         path.resolve(certfile),
         argv.outfile,
@@ -79,11 +71,7 @@ else if (match(cmd, 'sign', 2)) {
     ;
 }
 else if (match(cmd, 'cafile', 2)) {
-    var host = argv._[1];
-    if (!host) {
-        console.error('ERROR: peerca cafile requires a HOST argument');
-        return usage(1);
-    }
+    var host = defined(argv._[1], 'localhost');
     console.log(path.join(argv.dir, host, 'ca.pem'));
 }
 else usage(1)

@@ -1,19 +1,25 @@
 peerca COMMAND OPTIONS
 
-  peerca generate HOST {-d DIR}
+  peerca generate {-d DIR | -h HOST}
  
-    Generate local certificates for HOST in DIR/HOST.
+    Generate local certificates for HOST in DIR.
 
-  peerca sign CERT.csr HOST {-d DIR}
+  peerca fingerprint {-d DIR | -h HOST}
+ 
+    Print the fingerprint hash for HOST in DIR.
+
+  peerca sign CERT.csr {-d DIR | -h HOST}
 
     Sign CERT.csr using the certificates in DIR/HOST.
 
-  peerca cafile HOST {-d DIR}
+  peerca cafile {-d DIR | -h HOST}
 
     Print the path to the cafile for PROFILE in DIR.
 
   OPTIONS
   
-    -d DIR  Profile directory. If not provided uses the environment
-            variable $PEERCA_PATH or ~/.config/peerca
+    -d DIR   Profile directory. If not provided uses the environment
+             variable $PEERCA_PATH or ~/.config/peerca
+    -h HOST  Domain name (FQDN) to use. If not provided uses the
+             environment variable $PEERCA_HOST or "localhost"
 
