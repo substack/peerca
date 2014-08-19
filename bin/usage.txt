@@ -15,5 +15,5 @@ peerca COMMAND OPTIONS
   OPTIONS
   
     -d DIR  Profile directory. If not provided uses the environment
-            variable $PEERCA_DIR or ~/.config/peerca
+            variable $PEERCA_PATH or ~/.config/peerca
 

@@ -16,7 +16,10 @@ var argv = minimist(process.argv.slice(2), {
         p: 'port',
         o: 'outfile'
     },
-    default: { dir: process.cwd() }
+    default: {
+        dir: process.env.PEERCA_PATH
+            || path.join(process.env.HOME, '.config/peerca')
+    }
 });
 
 var cmd = argv._[0];
