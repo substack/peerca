@@ -10,7 +10,11 @@
     "minimist": "^1.1.0",
     "split": "~0.3.0",
     "through2": "^1.1.1",
-    "defined": "~0.0.0"
+    "defined": "~0.0.0",
+    "tar": "~1.0.0",
+    "concat-stream": "~1.4.6",
+    "mkdirp": "~0.5.0",
+    "fstream": "~1.0.1"
   },
   "devDependencies": {
     "tape": "^2.13.2"

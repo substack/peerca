@@ -1,9 +1,11 @@
 #!/bin/bash
+# in a real setting, replace localhost with FQDN like "substack.net"
 
-mkdir -p keys/client keys/localhost
+mkdir -p keys/client keys/server
 
-peerca generate localhost -d ./keys
-peerca generate client -d ./keys
+peerca generate -d keys/server -h localhost
+peerca generate -d keys/client
 
-peerca sign keys/client/self.csr localhost -d ./keys \
-  -o keys/client/localhost-connect.pem
+peerca request -d keys/client \
+| peerca authorize -d keys/server \
+| peerca add localhost -d keys/client

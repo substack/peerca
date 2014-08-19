@@ -26,8 +26,8 @@ function PeerCA (opts) {
     this.dir = defined(opts.dir, process.env.PEERCA_PATH);
 }
 
-PeerCA.prototype.generate = function (host, cb) {
-    var args = [ host, path.join(argv.dir, host) ];
+PeerCA.prototype.generate = function (cb) {
+    var args = [ this.host, path.join(this.dir, this.host) ];
     var ps = bin('generate.sh', args);
     ps.on('exit', function (code) {
         if (cb && code) cb(new Error('non-zero exit code: ' + code))
@@ -36,11 +36,16 @@ PeerCA.prototype.generate = function (host, cb) {
     return ps;
 };
 
-PeerCA.prototype.fingerprint = function (cb) {
+PeerCA.prototype.fingerprint = function (host, cb) {
+    if (typeof host === 'function') {
+        cb = host;
+        host = undefined;
+    }
+    if (!host) host = 'localhost';
     var args = [
         'x509',
         '-in',
-        path.join(this.dir, 'self-cert.pem'),
+        path.join(this.dir, host, 'self-cert.pem'),
         '-sha1',
         '-noout',
         '-fingerprint'

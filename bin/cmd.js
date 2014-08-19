@@ -10,19 +10,24 @@ var split = require('split');
 var through = require('through2');
 var defined = require('defined');
 
+var peerca = require('../');
+
 var argv = minimist(process.argv.slice(2), {
     alias: {
         h: 'host',
         d: ['dir','directory'],
         p: 'port',
-        o: 'outfile'
+        o: 'outfile',
+        i: 'infile'
     },
     default: {
         dir: defined(
             process.env.PEERCA_PATH,
             path.join(process.env.HOME, '.config/peerca')
         ),
-        host: defined(process.env.PEERCA_HOST, 'localhost')
+        host: defined(process.env.PEERCA_HOST, 'localhost'),
+        outfile: '-',
+        infile: '-'
     }
 });
 
@@ -39,20 +44,16 @@ else if (match(cmd, 'generate', 1)) {
     ;
 }
 else if (match(cmd, 'fingerprint', 2)) {
-    var host = defined(argv._[1], 'localhost');
-    var args = [ path.join(argv.dir, host) ];
-    spawn(path.join(__dirname, 'hash.sh'), args, { stdio: [ 0, 'pipe', 2 ] })
-        .on('exit', function (code) { assert.equal(code, 0) })
-        .stdout.pipe(split()).pipe(through(function (buf, enc, next) {
-            var line = buf.toString('utf8');
-            var m = /^SHA1 Fingerprint=(\S+)/.exec(line);
-            if (!m) { this.push(buf + '\n'); return next() }
-            this.push(m[1].split(':').join('').toLowerCase());
-            next();
-        })).pipe(process.stdout)
-    ;
+    var ca = peerca(argv);
+    ca.fingerprint(function (err, hash) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        else console.log(hash);
+    });
 }
-else if (match(cmd, 'sign', 2)) {
+else if (match(cmd, 'authorize', 2)) {
     var certfile = argv._[1];
     if (!certfile) {
         console.error('ERROR: peerca sign requires a CERT.ca argument');
@@ -61,18 +62,24 @@ else if (match(cmd, 'sign', 2)) {
     var host = defined(argv._[2], 'localhost');
     var args = [
         path.resolve(certfile),
-        argv.outfile,
         path.join(argv.dir, host)
     ];
-    var opts = { stdio: [ 0, 'pipe', 2 ] };
-    spawn(path.join(__dirname, 'sign.sh'), args, opts)
-        .on('exit', function (code) { assert.equal(code, 0) })
-        .stdout.pipe(process.stdout)
+    var input = argv.infile !== '-'
+        ? fs.createReadStream(argv.infile)
+        : process.stdin
     ;
+    var output = argv.outfile !== '-'
+        ? fs.createWriteStream(argv.outfile)
+        : process.stdout
+    ;
+    var ps = spawn(path.join(__dirname, 'sign.sh'), args);
+    ps.on('exit', function (code) { assert.equal(code, 0) })
+    ps.stdout.pipe(output);
 }
-else if (match(cmd, 'cafile', 2)) {
+else if (match(cmd, 'request', 2)) {
     var host = defined(argv._[1], 'localhost');
-    console.log(path.join(argv.dir, host, 'ca.pem'));
+    var file = path.join(argv.dir, host, 'self.csr');
+    fs.createReadStream(file).pipe(process.stdout);
 }
 else usage(1)
 

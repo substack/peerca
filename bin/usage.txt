@@ -16,6 +16,9 @@ peerca COMMAND OPTIONS
 
     Print the path to the cafile for PROFILE in DIR.
 
+  peerca keyserver
+  peerca trust
+
   OPTIONS
   
     -d DIR   Profile directory. If not provided uses the environment
