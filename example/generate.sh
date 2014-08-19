@@ -1,9 +1,9 @@
 #!/bin/bash
 
-mkdir -p keys/client keys/server
+mkdir -p keys/client keys/localhost
 
-peerca generate server -d ./keys
+peerca generate localhost -d ./keys
 peerca generate client -d ./keys
 
-peerca sign keys/client/self.csr server -d ./keys \
-  -o keys/client/server-connect.pem
+peerca sign keys/client/self.csr localhost -d ./keys \
+  -o keys/client/localhost-connect.pem

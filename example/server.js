@@ -2,9 +2,9 @@ var tls = require('tls');
 var fs = require('fs');
 
 var opts = {
-    key: fs.readFileSync(__dirname + '/keys/server/self-key.pem'),
-    cert: fs.readFileSync(__dirname + '/keys/server/self-cert.pem'),
-    ca: fs.readFileSync(__dirname + '/keys/server/ca.pem')
+    key: fs.readFileSync(__dirname + '/keys/localhost/self-key.pem'),
+    cert: fs.readFileSync(__dirname + '/keys/localhost/self-cert.pem'),
+    ca: fs.readFileSync(__dirname + '/keys/localhost/ca.pem')
 };
 
 var server = tls.createServer(opts, function (stream) {
