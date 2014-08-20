@@ -155,5 +155,73 @@ peerca COMMAND OPTIONS
 # methods
 
 ``` js
+var peerca = require('peerca')
 ```
 
+## var ca = peerca(opts)
+
+Create a peerca instance `ca` from options:
+
+* `opts.dir` - configuration directory, default: `$PEERCA_PATH` or
+`'~/.config/peerca'`
+* `opts.host` - hostname, default: `$PEERCA_HOST` or `'localhost'`
+
+## ca.generate(host=ca.host, cb)
+
+Generate certificate and key files on disk in the configuration directory.
+cb(err) fires when the files have been written successfully or an error occurs.
+
+## ca.fingerprint(host=ca.host, cb)
+
+Calculate the fingerprint of the local public certificate in `cb(err, hash)`.
+
+## var rstream = ca.request()
+
+Return a readable stream `rstream` with a certificate request that should be
+piped into a remote `ca.authorize()`.
+
+## var dstream = ca.authorize(host)
+
+Return a duplex stream `dstream` that accepts a certificate request stream from
+a remote `ca.request()` as input and produces a certificate archive that should
+be fed back into `ca.save()` on the same remote host.
+
+## var wstream = ca.save(host)
+
+Return a writable stream `wstream` that saves the certificate archive for the
+remote `host`.
+
+## ca.list(name, cb)
+
+For each `name`, call `cb(err, ls)` with a list of results. The named lists to
+use for `name` are:
+
+* `'host'` - hosts configured in the configuration directory
+* `'authorized'` - hosts authorized with `.authorize()` 
+* `'saved'` - names saved with `.save()`
+
+## var files = ca.files(host)
+
+Return the file paths for certificates and keys necessary to connect to `host`.
+To create a server, omit the `host` argument.
+
+## var opts = ca.options(host)
+
+Return the certificates and keys necessary to connect to `host` as an object
+mapping keys to buffers that you can pass in directly to `tls.connect()` or
+`tls.createServer()`.
+
+This method reads the options synchronously, so you should only use this method
+when you first start up a process.
+
+# install
+
+With [npm](https://npmjs.org) do:
+
+```
+npm install peerca
+```
+
+# license
+
+MIT
