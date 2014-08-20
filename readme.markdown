@@ -2,6 +2,8 @@
 
 generate ssl certificates for peer authentication
 
+[![build status](https://secure.travis-ci.org/substack/peerca.png)](http://travis-ci.org/substack/peerca)
+
 Instead of paying a lot of money to get a certificate signed by an NSA-approved
 certificate authority, with peerca each server explicitly signs the certificates
 that are allowed to connect to it. This is similar to how the `authorized_keys`
