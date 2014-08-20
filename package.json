@@ -1,7 +1,7 @@
 {
   "name": "peerca",
   "version": "1.0.0",
-  "description": "issue and revoke TLS certificates for authentication",
+  "description": "generate ssl certificates for peer authentication",
   "bin": {
     "peerca": "bin/cmd.js"
   },
@@ -10,10 +10,10 @@
     "minimist": "^1.1.0",
     "through2": "^1.1.1",
     "defined": "~0.0.0",
-    "tar": "~1.0.0",
-    "concat-stream": "~1.4.6",
+    "tar": "^1.0.0",
+    "concat-stream": "^1.4.6",
     "mkdirp": "~0.5.0",
-    "fstream": "~1.0.1",
+    "fstream": "^1.0.1",
     "duplexer2": "~0.0.2",
     "has": "~0.0.1"
   },

@@ -1,6 +1,6 @@
 # peerca
 
-generate ssl certificates for authentication
+generate ssl certificates for peer authentication
 
 Instead of paying a lot of money to get a certificate signed by an NSA-approved
 certificate authority, with peerca each server explicitly signs the certificates
