@@ -57,7 +57,7 @@ and on substack.net we can spin up a server:
 ``` js
 var tls = require('tls');
 var ca = require('peerca')();
-var opts = ca.options();
+var opts = ca.options({ host: 'substack.net' });
 
 var server = tls.createServer(opts, function (stream) {
     stream.end('beep boop\n');
