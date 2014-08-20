@@ -67,12 +67,11 @@ PeerCA.prototype.fingerprint = function (host, cb) {
     }));
 };
 
-PeerCA.prototype.add = function (host) {
-    var p = tar.Parse();
-    p.on('entry', function (entry) {
-        console.log('entry=', entry);
+PeerCA.prototype.add = function (name) {
+    return tar.Extract({
+        path: path.join(this.dir, this.host, 'connect', name),
+        strip: 1
     });
-    return p;
 };
 
 PeerCA.prototype.authorize = function (name) {
@@ -110,16 +109,17 @@ PeerCA.prototype.authorize = function (name) {
     mkdirp(dir, function (err) {
         input.pipe(ps.stdin);
         input.pipe(fs.createWriteStream(files.csr));
-        var ws = fs.createWriteStream(files.pem);
-        ps.stdout.pipe(ws);
         
         var pending = 2;
+        
+        var ws = fs.createWriteStream(files.pem);
+        ws.once('close', done);
+        ps.stdout.pipe(ws);
+        
         fs.createReadStream(path.join(self.dir, self.host, 'ca.pem'))
             .pipe(fs.createWriteStream(files.ca))
             .once('close', done)
         ;
-        
-        ws.once('close', done);
         
         function done () {
             if (-- pending !== 0) return;
@@ -135,8 +135,7 @@ PeerCA.prototype._archive = function (name) {
     return r.pipe(tar.Pack())
 };
 
-PeerCA.prototype.request = function (host) {
-    if (!host) host = 'localhost';
-    var file = path.join(this.dir, host, 'self.csr');
+PeerCA.prototype.request = function () {
+    var file = path.join(this.dir, this.host, 'self.csr');
     return fs.createReadStream(file);
 };

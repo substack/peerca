@@ -74,6 +74,19 @@ else if (match(cmd, 'request', 2)) {
     var ca = peerca(argv);
     ca.request().pipe(process.stdout);
 }
+else if (match(cmd, 'add', 2)) {
+    var name = argv._[1];
+    if (!name) {
+        console.error('ERROR: FQDN argument required\n');
+        return usage(1);
+    }
+    var ca = peerca(argv);
+    var input = argv.infile !== '-'
+        ? fs.createReadStream(argv.infile)
+        : process.stdin
+    ;
+    input.pipe(ca.add(name));
+}
 else usage(1)
 
 function match (s, m, len) {
