@@ -37,11 +37,10 @@ if (argv.help || match(cmd, 'help', 2)) {
     usage(0);
 }
 else if (match(cmd, 'generate', 1)) {
-    var host = defined(argv._[1], 'localhost');
-    var args = [ host, path.join(argv.dir, host) ];
-    spawn(path.join(__dirname, 'generate.sh'), args, { stdio: 'inherit' })
-        .on('exit', function (code) { assert.equal(code, 0) })
-    ;
+    var ca = peerca(argv);
+    var ps = ca.generate();
+    ps.stderr.pipe(process.stderr);
+    ps.stdout.pipe(process.stdout);
 }
 else if (match(cmd, 'fingerprint', 2)) {
     var ca = peerca(argv);
@@ -54,16 +53,13 @@ else if (match(cmd, 'fingerprint', 2)) {
     });
 }
 else if (match(cmd, 'authorize', 2)) {
-    var certfile = argv._[1];
-    if (!certfile) {
-        console.error('ERROR: peerca sign requires a CERT.ca argument');
+    var name = argv._[1];
+    if (!name) {
+        console.error('ERROR: local name required for csr\n');
         return usage(1);
     }
-    var host = defined(argv._[2], 'localhost');
-    var args = [
-        path.resolve(certfile),
-        path.join(argv.dir, host)
-    ];
+    
+    var ca = peerca(argv);
     var input = argv.infile !== '-'
         ? fs.createReadStream(argv.infile)
         : process.stdin
@@ -72,9 +68,7 @@ else if (match(cmd, 'authorize', 2)) {
         ? fs.createWriteStream(argv.outfile)
         : process.stdout
     ;
-    var ps = spawn(path.join(__dirname, 'sign.sh'), args);
-    ps.on('exit', function (code) { assert.equal(code, 0) })
-    ps.stdout.pipe(output);
+    input.pipe(ca.authorize(name)).pipe(output);
 }
 else if (match(cmd, 'request', 2)) {
     var ca = peerca(argv);

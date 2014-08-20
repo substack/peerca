@@ -14,7 +14,8 @@
     "tar": "~1.0.0",
     "concat-stream": "~1.4.6",
     "mkdirp": "~0.5.0",
-    "fstream": "~1.0.1"
+    "fstream": "~1.0.1",
+    "duplexer": "~0.1.1"
   },
   "devDependencies": {
     "tape": "^2.13.2"
