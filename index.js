@@ -6,8 +6,6 @@ var assert = require('assert');
 var spawn = require('child_process').spawn;
 var exec = require('child_process').exec;
 
-var minimist = require('minimist');
-var split = require('split');
 var through = require('through2');
 var defined = require('defined');
 var concat = require('concat-stream');

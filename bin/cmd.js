@@ -2,11 +2,9 @@
 
 var fs = require('fs');
 var path = require('path');
-var assert = require('assert');
 var spawn = require('child_process').spawn;
 
 var minimist = require('minimist');
-var split = require('split');
 var through = require('through2');
 var defined = require('defined');
 var has = require('has');
