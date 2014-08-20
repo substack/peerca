@@ -1,15 +1,11 @@
 var tls = require('tls');
-var fs = require('fs');
-
-var opts = {
-    key: fs.readFileSync(__dirname + '/keys/localhost/self-key.pem'),
-    cert: fs.readFileSync(__dirname + '/keys/localhost/self-cert.pem'),
-    ca: fs.readFileSync(__dirname + '/keys/localhost/ca.pem'),
-    requestCert: true,
-    rejectUnauthorized: true
-};
+var ca = require('../')({ dir: 'keys/server' });
+var opts = ca.options();
 
 var server = tls.createServer(opts, function (stream) {
     stream.end('beep boop\n');
+});
+server.on('clientError', function (err) {
+    console.log(err);
 });
 server.listen(7007);

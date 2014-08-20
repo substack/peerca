@@ -13,7 +13,7 @@ var defined = require('defined');
 var concat = require('concat-stream');
 var tar = require('tar');
 var mkdirp = require('mkdirp');
-var duplexer = require('duplexer');
+var duplexer = require('duplexer2');
 var fstream = require('fstream');
 
 module.exports = PeerCA;
@@ -25,7 +25,7 @@ function bin (cmd, args, opts) {
 function PeerCA (opts) {
     if (!(this instanceof PeerCA)) return new PeerCA(opts);
     if (!opts) opts = {};
-    this.dir = defined(opts.dir, process.env.PEERCA_PATH);
+    this.dir = path.resolve(defined(opts.dir, process.env.PEERCA_PATH));
     this.host = defined(opts.host, process.env.PEERCA_HOST, 'localhost');
 }
 
@@ -80,7 +80,7 @@ PeerCA.prototype.authorize = function (name) {
     var files = {
         ca: path.join(dir, 'ca.pem'),
         csr: path.join(dir, 'cert.csr'),
-        pem: path.join(dir, 'cert.pem')
+        cert: path.join(dir, 'cert.pem')
     };
     var ps = spawn('openssl', [
         'x509',
@@ -90,8 +90,7 @@ PeerCA.prototype.authorize = function (name) {
         '-CAkey', path.join(this.dir, this.host, 'ca-key.pem'),
         '-extfile', path.join(this.dir, this.host, 'extfile.cnf'),
         '-CAcreateserial',
-        '-CAserial', path.join(this.dir, this.host, 'ca.seq'),
-        '-noout'
+        '-CAserial', path.join(this.dir, this.host, 'ca.seq')
     ]);
     var errors = ps.stderr.pipe(through());
     ps.on('exit', function (code) {
@@ -107,12 +106,12 @@ PeerCA.prototype.authorize = function (name) {
     var dup = duplexer(input, output);
     
     mkdirp(dir, function (err) {
+        var pending = 3;
+        
         input.pipe(ps.stdin);
-        input.pipe(fs.createWriteStream(files.csr));
+        input.pipe(fs.createWriteStream(files.csr)).once('close', done);
         
-        var pending = 2;
-        
-        var ws = fs.createWriteStream(files.pem);
+        var ws = fs.createWriteStream(files.cert);
         ws.once('close', done);
         ps.stdout.pipe(ws);
         
@@ -127,6 +126,12 @@ PeerCA.prototype.authorize = function (name) {
         }
     });
     return dup;
+};
+
+PeerCA.prototype._archive = function (name) {
+    var dir = path.join(this.dir, this.host, 'authorized', name);
+    var r = fstream.Reader(dir);
+    return r.pipe(tar.Pack())
 };
 
 PeerCA.prototype.list = function (name, cb) {
@@ -162,13 +167,47 @@ PeerCA.prototype.list = function (name, cb) {
     }
 };
 
-PeerCA.prototype._archive = function (name) {
-    var dir = path.join(this.dir, this.host, 'authorized', name);
-    var r = fstream.Reader(dir);
-    return r.pipe(tar.Pack())
-};
-
 PeerCA.prototype.request = function () {
     var file = path.join(this.dir, this.host, 'self.csr');
     return fs.createReadStream(file);
+};
+
+PeerCA.prototype.files = function (host) {
+    var dir = path.join(this.dir, this.host);
+    if (host === undefined) {
+        return {
+            key: path.join(dir, 'self-key.pem'),
+            cert: path.join(dir, 'self-cert.pem'),
+            ca: path.join(dir, 'ca.pem')
+        };
+    }
+    else {
+        return {
+            key: path.join(dir, 'self-key.pem'),
+            cert: path.join(dir, 'saved', host, 'cert.pem'),
+            ca: path.join(dir, 'saved', host, 'ca.pem')
+        };
+    }
+};
+
+PeerCA.prototype.options = function (host) {
+    var files = this.files(host);
+    if (host === undefined) {
+        return {
+            key: fs.readFileSync(files.key),
+            cert: fs.readFileSync(files.cert),
+            ca: fs.readFileSync(files.ca),
+            requestCert: true,
+            rejectUnauthorized: true
+        };
+    }
+    else {
+        return {
+            key: fs.readFileSync(files.key),
+            cert: fs.readFileSync(files.cert),
+            ca: fs.readFileSync(files.ca),
+            requestCert: true,
+            rejectUnauthorized: true
+        };
+    }
 };

@@ -1,13 +1,6 @@
 var tls = require('tls');
-var crypto = require('crypto');
-var fs = require('fs');
+var ca = require('../')({ dir: 'keys/client' });
+var opts = ca.options('localhost');
 
-var opts = {
-    key: fs.readFileSync(__dirname + '/keys/client/self-key.pem'),
-    cert: fs.readFileSync(__dirname + '/keys/client/localhost-connect.pem'),
-    ca: fs.readFileSync(__dirname + '/keys/localhost/ca.pem')
-};
-var stream = tls.connect(7007, 'localhost', opts, function () {
-    console.log(stream.getPeerCertificate());
-});
+var stream = tls.connect(7007, 'localhost', opts);
 stream.pipe(process.stdout);

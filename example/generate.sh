@@ -7,5 +7,5 @@ peerca generate -d keys/server -h localhost
 peerca generate -d keys/client
 
 peerca request -d keys/client \
-| peerca authorize -d keys/server \
-| peerca add localhost -d keys/client
+| peerca authorize client -d keys/server \
+| peerca save localhost -d keys/client
