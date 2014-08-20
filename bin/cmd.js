@@ -85,7 +85,21 @@ else if (match(cmd, 'save', 2)) {
         ? fs.createReadStream(argv.infile)
         : process.stdin
     ;
-    input.pipe(ca.add(name));
+    input.pipe(ca.save(name));
+}
+else if (match(cmd, 'list', 1) || match(cmd, 'ls', 1)) {
+    var name = argv._[1];
+    if (match(name, 'host', 1)) name = 'host';
+    if (match(name, 'authorized', 1)) name = 'authorized';
+    if (match(name, 'saved', 1)) name = 'saved';
+    var ca = peerca(argv);
+    ca.list(name, function (err, ls) {
+        if (err) {
+            console.error(err);
+            process.exit(1);
+        }
+        else ls.forEach(function (l) { console.log(l) });
+    });
 }
 else usage(1)
 

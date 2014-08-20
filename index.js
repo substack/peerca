@@ -129,6 +129,39 @@ PeerCA.prototype.authorize = function (name) {
     return dup;
 };
 
+PeerCA.prototype.list = function (name, cb) {
+    if (name === 'host') {
+        fs.readdir(this.dir, function (err, files) {
+            if (err) cb(err)
+            else cb(null, files.filter(function (file) {
+                return !/^\./.test(file)
+            }));
+        });
+    }
+    else if (name === 'authorized') {
+        var dir = path.join(this.dir, this.host, 'authorized');
+        fs.readdir(dir, function (err, files) {
+            if (err) cb(err)
+            else cb(null, files.filter(function (file) {
+                return !/^\./.test(file)
+            }));
+        });
+    }
+    else if (name === 'saved') {
+        var dir = path.join(this.dir, this.host, 'saved');
+        fs.readdir(dir, function (err, files) {
+            if (err) cb(err)
+            else cb(null, files.filter(function (file) {
+                return !/^\./.test(file)
+            }));
+        });
+    }
+    else {
+        var err = new Error('unrecognized list name: ' + name);
+        process.nextTick(function () { cb(err) });
+    }
+};
+
 PeerCA.prototype._archive = function (name) {
     var dir = path.join(this.dir, this.host, 'authorized', name);
     var r = fstream.Reader(dir);

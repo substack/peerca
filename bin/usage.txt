@@ -17,6 +17,10 @@ peerca COMMAND OPTIONS
 
    Add a certificate archive from a file CERTAR or stdin for a domain NAME.
  
+  peerca list host          Print each host in DIR.
+  peerca list authorized    Print each authorized name.
+  peerca list saved         Print each saved connection name.
+
   peerca fingerprint
  
     Print the fingerprint hash for HOST in DIR.
