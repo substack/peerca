@@ -67,9 +67,9 @@ PeerCA.prototype.fingerprint = function (host, cb) {
     }));
 };
 
-PeerCA.prototype.add = function (name) {
+PeerCA.prototype.save = function (name) {
     return tar.Extract({
-        path: path.join(this.dir, this.host, 'connect', name),
+        path: path.join(this.dir, this.host, 'saved', name),
         strip: 1
     });
 };

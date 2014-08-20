@@ -74,7 +74,7 @@ else if (match(cmd, 'request', 2)) {
     var ca = peerca(argv);
     ca.request().pipe(process.stdout);
 }
-else if (match(cmd, 'add', 2)) {
+else if (match(cmd, 'save', 2)) {
     var name = argv._[1];
     if (!name) {
         console.error('ERROR: FQDN argument required\n');

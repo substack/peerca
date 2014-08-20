@@ -10,7 +10,7 @@ fi
 
 DIR="$2"
 if test -z "$DIR"; then DIR="$PWD"; fi
-mkdir -p "$DIR" "$DIR/authorized" "$DIR/connect"
+mkdir -p "$DIR" "$DIR/authorized" "$DIR/saved"
 
 cd "$DIR"
 
