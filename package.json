@@ -15,7 +15,8 @@
     "concat-stream": "~1.4.6",
     "mkdirp": "~0.5.0",
     "fstream": "~1.0.1",
-    "duplexer2": "~0.0.2"
+    "duplexer2": "~0.0.2",
+    "has": "~0.0.1"
   },
   "devDependencies": {
     "tape": "^2.13.2"

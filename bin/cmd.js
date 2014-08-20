@@ -9,6 +9,7 @@ var minimist = require('minimist');
 var split = require('split');
 var through = require('through2');
 var defined = require('defined');
+var has = require('has');
 
 var peerca = require('../');
 
@@ -42,7 +43,7 @@ else if (match(cmd, 'generate', 1)) {
     ps.stderr.pipe(process.stderr);
     ps.stdout.pipe(process.stdout);
 }
-else if (match(cmd, 'fingerprint', 2)) {
+else if (match(cmd, 'hash', 2)) {
     var ca = peerca(argv);
     ca.fingerprint(function (err, hash) {
         if (err) {
@@ -100,6 +101,16 @@ else if (match(cmd, 'list', 1) || match(cmd, 'ls', 1)) {
         }
         else ls.forEach(function (l) { console.log(l) });
     });
+}
+else if (match(cmd, 'file', 2)) {
+    var name = argv._[1];
+    var ca = peerca(argv);
+    var files = ca.files(argv.c);
+    if (!has(files, name)) {
+        console.error('No such file.');
+        process.exit(1);
+    }
+    else console.log(files[name]);
 }
 else usage(1)
 

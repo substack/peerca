@@ -15,13 +15,19 @@ peerca COMMAND OPTIONS
  
   peerca save NAME {-i CERTAR}
 
-   Add a certificate archive from a file CERTAR or stdin for a domain NAME.
+    Add a certificate archive from a file CERTAR or stdin for a domain NAME.
+ 
+  peerca file key             Print the private key file path.
+  peerca file cert            Print the certificate file.
+  peerca file cert -c REMOTE  Certificate file for connecting to REMOTE.
+  peerca file ca              Certificate authority file.
+  peerca file ca -c REMOTE    CA file for connecting to REMOTE.
  
   peerca list host          Print each host in DIR.
   peerca list authorized    Print each authorized name.
   peerca list saved         Print each saved connection name.
 
-  peerca fingerprint
+  peerca hash
  
     Print the fingerprint hash for HOST in DIR.
 
