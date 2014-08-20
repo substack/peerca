@@ -32,7 +32,7 @@ $ ssh substack.net 'peerca generate -h substack.net'
 ```
 
 Send the local certificates to the remote server, sign them on the remote
-server under the same `substack-laptop`, and save the result:
+server under the name `substack-laptop`, and save the result:
 
 ```
 $ peerca request \
