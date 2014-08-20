@@ -23,7 +23,11 @@ function bin (cmd, args, opts) {
 function PeerCA (opts) {
     if (!(this instanceof PeerCA)) return new PeerCA(opts);
     if (!opts) opts = {};
-    this.dir = path.resolve(defined(opts.dir, process.env.PEERCA_PATH, path.join(process.env.HOME, '.config/peerca')));
+    this.dir = path.resolve(defined(
+        opts.dir,
+        process.env.PEERCA_PATH,
+        path.join(process.env.HOME, '.config/peerca')
+    ));
     this.host = defined(opts.host, process.env.PEERCA_HOST, 'localhost');
 }
 
