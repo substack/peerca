@@ -79,7 +79,7 @@ PeerCA.prototype.authorize = function (name) {
     var self = this;
     var dir = path.join(this.dir, this.host, 'authorized', name);
     var files = {
-        ca: path.join(this.dir, this.host, 'ca.pem'),
+        ca: path.join(dir, 'ca.pem'),
         csr: path.join(dir, 'cert.csr'),
         pem: path.join(dir, 'cert.pem')
     };
@@ -94,7 +94,14 @@ PeerCA.prototype.authorize = function (name) {
         '-CAserial', path.join(this.dir, this.host, 'ca.seq'),
         '-noout'
     ]);
-    ps.stderr.pipe(process.stderr);
+    var errors = ps.stderr.pipe(through());
+    ps.on('exit', function (code) {
+        if (code === 0) return;
+        errors.pipe(concat(function (body) {
+            var msg = 'not zero exit code: ' + code + '\n' + body;
+            dup.emit('error', new Error(msg));
+        }));
+    });
     
     var input = through();
     var output = through();
@@ -106,9 +113,18 @@ PeerCA.prototype.authorize = function (name) {
         var ws = fs.createWriteStream(files.pem);
         ps.stdout.pipe(ws);
         
-        ws.once('close', function next () {
+        var pending = 2;
+        fs.createReadStream(path.join(self.dir, self.host, 'ca.pem'))
+            .pipe(fs.createWriteStream(files.ca))
+            .once('close', done)
+        ;
+        
+        ws.once('close', done);
+        
+        function done () {
+            if (-- pending !== 0) return;
             self._archive(name).pipe(output);
-        });
+        }
     });
     return dup;
 };
