@@ -5,7 +5,4 @@ var opts = ca.options();
 var server = tls.createServer(opts, function (stream) {
     stream.end('beep boop\n');
 });
-server.on('clientError', function (err) {
-    console.log(err);
-});
 server.listen(7007);
