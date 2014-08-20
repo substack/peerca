@@ -1,6 +1,6 @@
 {
   "name": "peerca",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "generate ssl certificates for peer authentication",
   "bin": {
     "peerca": "bin/cmd.js"
