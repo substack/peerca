@@ -32,8 +32,13 @@
     "certificate",
     "ca",
     "tls",
+    "ssl",
     "authentication",
-    "authorized_keys"
+    "auth",
+    "authorized_keys",
+    "authorize",
+    "https",
+    "docker"
   ],
   "author": {
     "name": "James Halliday",
