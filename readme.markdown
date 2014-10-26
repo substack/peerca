@@ -36,7 +36,7 @@ server under the name `substack-laptop`, and save the result:
 
 ```
 $ peerca request \
-  | ssh substack.net 'peerca authorize substack-laptop' \
+  | ssh substack.net 'peerca authorize substack-laptop -h substack.net' \
   | peerca save substack.net
 ```
 
